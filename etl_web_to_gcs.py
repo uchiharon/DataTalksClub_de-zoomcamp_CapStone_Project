@@ -27,14 +27,14 @@ def fetch(dataset_url: str) -> Path:
         Return:
             file_path: Path. The path of the downloaded file
     """
-    print('Downloading data...')
+    print('Downloading data...\n')
     # Extract file name form the url
     file_name = 'output.zip'
     # Define the output file path
     file_path = Path(f'downloaded_data/{file_name}').as_posix()
     # Fetch the data from EIA website
     os.system("wget {} -O {}".format(dataset_url, file_path))
-    print('Download completed.')
+    print('Download completed.\n')
 
     return file_path
 
@@ -51,7 +51,7 @@ def extract_zipFile(file_path: Path) -> Path:
     """
 
     try:
-        print('Extracting zip file...')
+        print('Extracting zip file...\n')
         # Open and unzip the dataset file
         df_zip = ZipFile(file_path)
         # Get list of the name of files in the zip file
@@ -68,10 +68,10 @@ def extract_zipFile(file_path: Path) -> Path:
         # Close the open file to free up ram memory
         df_zip.close()
         
-        print('Zip file successfully extracted.')
+        print('Zip file successfully extracted.\n')
 
     except:
-        print('file does not exist')
+        print('file does not exist\n')
 
     return unzip_file_path
 
@@ -89,7 +89,7 @@ def table_reader(unzip_file_path:Path, input:str) -> pd.DataFrame:
 
     """
 
-    print(f'Reading excel sheet {input}...')
+    print(f'Reading excel sheet {input}...\n')
     df  = pd.read_excel(unzip_file_path,sheet_name=input)
     print('Successfully read data.')
 
@@ -130,7 +130,7 @@ def table_reader(unzip_file_path:Path, input:str) -> pd.DataFrame:
 
 
     print('Complete preprocessing.')
-    print('table reader job completed successfully')
+    print('table reader job completed successfully\n')
 
     return df
 
@@ -147,7 +147,7 @@ def transform(unzip_file_path) -> pd.DataFrame:
     """
 
     try:
-        print('Initiate data transformation...')
+        print('Initiate data transformation...\n')
         file_sheets = pd.ExcelFile(unzip_file_path).sheet_names
         if len(file_sheets) == 13:
             print('Okay file name')
@@ -194,7 +194,7 @@ def transform(unzip_file_path) -> pd.DataFrame:
 
         df1,df2,df3,df4,df5,df6,df7,df8,df9,df10 = df_a_temp, df['Page 1 Energy Storage'], df['Page 2 Stocks Data'], df['Page 2 Oil Stocks Data'], df['Page 2 Coal Stocks Data'], df['Page 2 Petcoke Stocks Data'], df['Page 3 Boiler Fuel Data'], df['Page 4 Generator Data'], df['Page 5 Fuel Receipts and Costs'], df_b_temp
     
-        print('Successfullu completed data transformation.')
+        print('Successfullu completed data transformation.\n')
             
                 
     except:
@@ -227,7 +227,7 @@ def write_local(year:int, df1:pd.DataFrame, df2:pd.DataFrame, df3:pd.DataFrame, 
 
     """
 
-    print('Writing to local disk...')
+    print('Writing to local disk...\n')
     path_list = []
     tables_name = ['generation_and_fuel', 'energy_storage', 'stocks', 'oil_stocks', 'coal_stocks', 'petcoke_stocks', 'boiler_fuel', 'generator', 'fuel_recipts_and_cost', 'plant_frame']
     for i in tables_name:
@@ -245,7 +245,7 @@ def write_local(year:int, df1:pd.DataFrame, df2:pd.DataFrame, df3:pd.DataFrame, 
     df8.to_parquet(path_list[7],compression="gzip")
     df9.to_parquet(path_list[8],compression="gzip")
     df10.to_parquet(path_list[9],compression="gzip")
-    print('Written data to local disk successfully.')
+    print('Written data to local disk successfully.\n')
 
     return path_list
 
@@ -263,7 +263,7 @@ def write_gcs(path_list:list[Path]) ->None:
 
     gcs_block = GcsBucket.load("zoom-gcs")
 
-    print('Started Uploading...')
+    print('Started Uploading...\n')
     for path in path_list:
         gcs_block.upload_from_path(
             from_path=path,
@@ -272,14 +272,33 @@ def write_gcs(path_list:list[Path]) ->None:
         )
         filename = path.split('/')[-1]
         print(f'Uploaded {filename}')
-    print('Uploading Completed')
+    print('Uploading Completed\n')
     
     return
 
 
 
-def clear_local_disk():
-    pass
+def clear_local_disk() -> None:
+    """
+        To delete file from the local disk in order to clear space and reduce disk cost on GCP
+
+        args:
+            None
+        
+        return:
+            None
+    """
+    print("Clearing local disk...")
+    # Remove the downloaded and extracted files
+    for i in os.listdir('downloaded_data'):
+        os.remove(os.path.join('downloaded_data', i))
+
+    # Delete the dataFrame parquet file stored to the local disk
+    for i in os.listdir('data'):
+        os.remove(os.path.join('data', i))
+
+    print('Local disk cleared.\n')
+    
 
 
 
@@ -321,6 +340,10 @@ class DataQualityTest(unittest.TestCase):
         for filename in os.listdir(folder_path):
             self.assertTrue(filename.endswith('.parquet'))
 
+    def test_z(self):
+        clear_local_disk()
+        
+
     
 ################################################################################################################
 """
@@ -331,6 +354,8 @@ class DataQualityTest(unittest.TestCase):
 
 
 if __name__=='__main__':
-    main(2014)
+    main(2021)
     unittest.main()
+    
+    
 
