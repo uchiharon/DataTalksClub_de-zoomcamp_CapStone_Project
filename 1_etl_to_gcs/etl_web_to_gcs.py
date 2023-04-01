@@ -313,7 +313,7 @@ def main(year:int) -> None:
     unzipped_file_path = extract_zipFile(zipped_file_path)
     df1,df2,df3,df4,df5,df6,df7,df8,df9,df10 = transform(unzipped_file_path)
     local_path = write_local(year,df1,df2,df3,df4,df5,df6,df7,df8,df9,df10)
-    # write_gcs(local_path)
+    write_gcs(local_path)
     print('Completed ETL pipeline')
 
 
