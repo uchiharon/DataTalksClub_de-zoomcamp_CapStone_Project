@@ -1,2 +1,7 @@
 1_etl_to_gcs/f923_2022
 1_etl_to_gcs/data
+# Default .gitignore content added by dbt Cloud
+target/
+dbt_packages/
+logs/
+# end dbt Cloud content
