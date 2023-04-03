@@ -1,17 +1,21 @@
+ {#
+    This macro extract the january the record was reported
+#}
+
 {% macro extract_month(months) %}
-  case {{ months }}
-    when  like "%january%" then 'january'
-    when  like "%february%" then 'february'
-    when  like "%march%" then 'march'
-    when  like "%april%" then 'april'
-    when  like "%may%" then 'may'
-    when  like "%june%" then 'june'
-    when  like "%july%" then 'july'
-    when  like "%august%" then 'august'
-    when  like "%september%" then 'september'
-    when  like "%october%" then 'october'
-    when  like "%november%" then 'november'
-    when  like "%december%" then 'december'
+  case 
+    when {{ months }} like "%january%" then 'january'
+    when {{ months }} like "%february%" then 'february'
+    when {{ months }} like "%march%" then 'march'
+    when {{ months }} like "%april%" then 'april'
+    when {{ months }} like "%may%" then 'may'
+    when {{ months }} like "%june%" then 'june'
+    when {{ months }} like "%july%" then 'july'
+    when {{ months }} like "%august%" then 'august'
+    when {{ months }} like "%september%" then 'september'
+    when {{ months }} like "%october%" then 'october'
+    when {{ months }} like "%november%" then 'november'
+    when {{ months }} like "%december%" then 'december'
     else null
   end
 {% endmacro %}
