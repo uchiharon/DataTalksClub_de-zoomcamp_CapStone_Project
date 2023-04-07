@@ -173,7 +173,29 @@ gross_and_net_generation_data as (
 semi_transformed_energy_storage_data as (select ee.*, gn.gross_gen, gn.net_gen from energy_and_elec_data ee join gross_and_net_generation_data gn
 on ee.row_number = ee.row_number and ee.year = ee.year and ee.month = ee.month)
 
-SELECT * FROM semi_transformed_energy_storage_data
+SELECT NULLIF( plant_id, '.') AS plant_id,			
+NULLIF( combined_heat_and_power_plant, '.') AS combined_heat_and_power_plant,			
+NULLIF( plant_name, '.') AS plant_name,			
+NULLIF( operator_name, '.') AS operator_name,			
+NULLIF( operator_id, '.') AS operator_id,			
+NULLIF( plant_state, '.') AS plant_state,			
+NULLIF( census_region, '.') AS census_region,			
+NULLIF( nerc_region, '.') AS nerc_region,			
+NULLIF( naics_code, '.') AS naics_code,			
+NULLIF( eia_sector_number, '.') AS eia_sector_number,			
+NULLIF( sector_name, '.') AS sector_name,			
+NULLIF( reported_prime_mover, '.') AS reported_prime_mover,			
+NULLIF( reported_fuel_type_code, '.') AS reported_fuel_type_code,			
+NULLIF( aer_fuel_type_code, '.') AS aer_fuel_type_code,			
+NULLIF( physical_unit_label, '.') AS physical_unit_label,
+CAST(NULLIF( quantity_of_energy_stored, '.') AS INT) AS quantity_of_energy_stored,
+CAST(NULLIF( elec_quantity, '.') AS INT) AS elec_quantity,
+CAST(NULLIF( gross_gen, '.') AS INT) AS gross_gen,
+CAST(NULLIF( net_gen, '.') AS INT) AS net_gen,
+NULLIF( month, '.') AS month,
+NULLIF( year, '.') AS year
+
+FROM semi_transformed_energy_storage_data
 
 {% if var('is_test_run', default=true) %}
 

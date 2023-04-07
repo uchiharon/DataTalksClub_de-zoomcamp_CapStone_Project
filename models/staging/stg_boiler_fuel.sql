@@ -184,7 +184,6 @@ on qh.row_number = sa.row_number and qh.year = sa.year and qh.month = sa.month)
 
 
 SELECT 
-    row_number,
     NULLIF(plant_id, '.') AS plant_id,
     NULLIF(combined_heat_and__power_plant, '.') AS combined_heat_and__power_plant,
     NULLIF(plant_name, '.') AS plant_name,
