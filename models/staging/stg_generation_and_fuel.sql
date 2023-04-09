@@ -9,7 +9,7 @@ with generation_and_fuel as (
 -- Create a table for the quantity of energy generated
 -- This was achieved by unpivotting the data columns
 
-quantity_of_energy_gen_data as (SELECT row_number,
+quantity_gen_data as (SELECT row_number,
 plant_id,			
 combined_heat_and_power_plant,			
 nuclear_unit_id,			
@@ -255,3 +255,21 @@ UNPIVOT(netgen for months in (
     netgen_november,			
     netgen_december
 )))
+
+
+
+
+quan_and_elec_quan_data as (
+    select qt.*, eq.elec_quantity from quantity_gen_data qt join elec_quantity_gen_data eq
+    on qt.row_number = eq.row_number and qt.year = eq.year and qt.month = eq.month 
+),
+
+mmbtuper_unit_and_tot_mmbtu_quan_data as (
+    select qt.*, eq.tot_mmbtu from mmbtuper_unit_gen_data qt join tot_mmbtu_gen_data eq
+    on qt.row_number = eq.row_number and qt.year = eq.year and qt.month = eq.month 
+),
+
+mmbtuper_unit_and_tot_mmbtu_quan_data as (
+    select qt.*, eq.netgen from elec_mmbtu_gen_data qt join netgen_gen_data eq
+    on qt.row_number = eq.row_number and qt.year = eq.year and qt.month = eq.month 
+),
