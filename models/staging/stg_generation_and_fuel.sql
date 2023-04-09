@@ -1,6 +1,6 @@
 {{config(materialized='view')}}
 
--- Load the energy storage table
+-- Load the generation and fuel table
 with generation_and_fuel as (
     select *, row_number() over(order by cast(plant_id as int)) as row_number from {{source('staging','generation_and_fuel')}}
 ),
@@ -28,7 +28,7 @@ aer_fuel_type_code,
 physical_unit_label,
 year,
 quantity,
-months
+{{extract_month('months')}} as month
 
 FROM generation_and_fuel
 UNPIVOT(quantity for months in (
@@ -44,7 +44,7 @@ UNPIVOT(quantity for months in (
     quantity_october,			
     quantity_november,			
     quantity_december
-)))
+))),
 
 
 
@@ -70,7 +70,7 @@ aer_fuel_type_code,
 physical_unit_label,
 year,
 elec_quantity,
-months
+{{extract_month('months')}} as month
 
 FROM generation_and_fuel
 UNPIVOT(elec_quantity for months in (
@@ -86,7 +86,7 @@ UNPIVOT(elec_quantity for months in (
     elec_quantity_october,			
     elec_quantity_november,			
     elec_quantity_december
-)))
+))),
 
 
 
@@ -112,7 +112,7 @@ aer_fuel_type_code,
 physical_unit_label,
 year,
 mmbtuper_unit,
-months
+{{extract_month('months')}} as month
 
 FROM generation_and_fuel
 UNPIVOT(mmbtuper_unit for months in (
@@ -128,7 +128,7 @@ UNPIVOT(mmbtuper_unit for months in (
     mmbtuper_unit_october,			
     mmbtuper_unit_november,			
     mmbtuper_unit_december
-)))
+))),
 
 
 
@@ -154,7 +154,7 @@ aer_fuel_type_code,
 physical_unit_label,
 year,
 tot_mmbtu,
-months
+{{extract_month('months')}} as month
 
 FROM generation_and_fuel
 UNPIVOT(tot_mmbtu for months in (
@@ -170,7 +170,7 @@ UNPIVOT(tot_mmbtu for months in (
     tot_mmbtu_october,			
     tot_mmbtu_november,			
     tot_mmbtu_december
-)))
+))),
 
 
 
@@ -197,7 +197,7 @@ aer_fuel_type_code,
 physical_unit_label,
 year,
 elec_mmbtu,
-months
+{{extract_month('months')}} as month
 
 FROM generation_and_fuel
 UNPIVOT(elec_mmbtu for months in (
@@ -213,7 +213,7 @@ UNPIVOT(elec_mmbtu for months in (
     elec_mmbtu_october,			
     elec_mmbtu_november,			
     elec_mmbtu_december	
-)))
+))),
 
 
 -- Create a table for the netgen generated
@@ -238,7 +238,7 @@ aer_fuel_type_code,
 physical_unit_label,
 year,
 netgen,
-months
+{{extract_month('months')}} as month
 
 FROM generation_and_fuel
 UNPIVOT(netgen for months in (
@@ -254,7 +254,7 @@ UNPIVOT(netgen for months in (
     netgen_october,			
     netgen_november,			
     netgen_december
-)))
+))),
 
 
 
@@ -264,12 +264,57 @@ quan_and_elec_quan_data as (
     on qt.row_number = eq.row_number and qt.year = eq.year and qt.month = eq.month 
 ),
 
-mmbtuper_unit_and_tot_mmbtu_quan_data as (
+mmbtuper_unit_and_tot_mmbtu_data as (
     select qt.*, eq.tot_mmbtu from mmbtuper_unit_gen_data qt join tot_mmbtu_gen_data eq
     on qt.row_number = eq.row_number and qt.year = eq.year and qt.month = eq.month 
 ),
 
-mmbtuper_unit_and_tot_mmbtu_quan_data as (
+elec_mmbtu_and_netgen_data as (
     select qt.*, eq.netgen from elec_mmbtu_gen_data qt join netgen_gen_data eq
     on qt.row_number = eq.row_number and qt.year = eq.year and qt.month = eq.month 
 ),
+
+semi_transformed_gen_data as (
+    SELECT qt.*, eq.mmbtuper_unit, eq.tot_mmbtu,  en.elec_mmbtu, en.netgen 
+    FROM quan_and_elec_quan_data qt
+    JOIN mmbtuper_unit_and_tot_mmbtu_data eq
+    on qt.row_number = eq.row_number and qt.year = eq.year and qt.month = eq.month 
+    JOIN elec_mmbtu_and_netgen_data en
+    on qt.row_number = en.row_number and qt.year = en.year and qt.month = en.month 
+
+)
+
+SELECT
+NULLIF(plant_id,'.') AS plant_id,			
+NULLIF(combined_heat_and_power_plant,'.') AS combined_heat_and_power_plant,			
+NULLIF(nuclear_unit_id,'.') AS nuclear_unit_id,			
+NULLIF(plant_name,'.') AS plant_name,			
+NULLIF(operator_name,'.') AS operator_name,			
+NULLIF(operator_id,'.') AS operator_id,			
+NULLIF(plant_state,'.') AS plant_state,			
+NULLIF(census_region,'.') AS census_region,			
+NULLIF(nerc_region,'.') AS nerc_region,			
+NULLIF(naics_code,'.') AS naics_code,			
+NULLIF(eia_sector_number,'.') AS eia_sector_number,			
+NULLIF(sector_name,'.') AS sector_name,			
+NULLIF(reported_prime_mover,'.') AS reported_prime_mover,			
+NULLIF(reported_fuel_type_code,'.') AS reported_fuel_type_code,			
+NULLIF(aer_fuel_type_code,'.') AS aer_fuel_type_code,			
+NULLIF(physical_unit_label,'.') AS physical_unit_label,
+CAST(NULLIF(quantity,'.') AS FLOAT64) AS quantity,
+CAST(NULLIF(elec_quantity,'.') AS FLOAT64) AS elec_quantity,
+CAST(NULLIF(mmbtuper_unit,'.') AS FLOAT64) AS mmbtuper_unit,
+CAST(NULLIF(tot_mmbtu,'.') AS FLOAT64) AS tot_mmbtu,
+CAST(NULLIF(elec_mmbtu,'.') AS FLOAT64) AS elec_mmbtu,
+CAST(NULLIF(netgen,'.') AS FLOAT64) AS netgen,
+NULLIF(year,'.') AS year,
+NULLIF(month,'.') AS month
+
+FROM semi_transformed_gen_data
+
+
+{% if var('is_test_run', default=true) %}
+
+limit 20
+
+{% endif %}
