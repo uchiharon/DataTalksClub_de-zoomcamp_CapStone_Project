@@ -1,9 +1,7 @@
 {{config(materialized='view')}}
 
 -- Load the boiler fuel table
-with coal_stocks_data as (
-    select *, row_number() over(order by cast(plant_id as int)) as row_number from {{source('staging','coal_stocks')}}
-)
+
 
 select NULLIF(plant_id, '.')AS plant_id,			
 NULLIF(combined_heat_and_power_plant, '.')AS combined_heat_and_power_plant,			
@@ -19,11 +17,12 @@ NULLIF(sector_name, '.')AS sector_name,
 NULLIF(reported_fuel_type_code, '.')AS reported_fuel_type_code,			
 NULLIF(aer_fuel_type_code, '.')AS aer_fuel_type_code,			
 NULLIF(physical_unit_label, '.')AS physical_unit_label,
-CAST(NULLIF(quantity, '.') AS FLOAT64) AS quantity,
+CAST(NULLIF(quantity, '.') AS FLOAT64) AS quantity_coal_stock,
 NULLIF(year, '.')AS year,
 NULLIF(months, '.')AS months
 
-from coal_stocks_data unpivot(quantity for months in (quantity_january,			
+from {{source('staging','coal_stocks')}}
+unpivot(quantity for months in (quantity_january,			
 quantity_february,			
 quantity_march,			
 quantity_april,			

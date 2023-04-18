@@ -17,7 +17,7 @@ NULLIF(sector_name, '.') AS sector_name,
 NULLIF(generator_id, '.') AS generator_id,			
 NULLIF(reported_prime_mover, '.') AS reported_prime_mover,
 NULLIF(year, '.') AS year,
-NULLIF(net_generation, '.') AS net_generation,
+NULLIF(net_generation, '.') AS net_generator_generation,
 {{extract_month('months')}} as month
 
 from {{source('staging','generator')}}

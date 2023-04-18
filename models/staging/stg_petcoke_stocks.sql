@@ -18,24 +18,24 @@ NULLIF(reported_fuel_type_code, '.') AS reported_fuel_type_code,
 NULLIF(aer_fuel_type_code, '.') AS aer_fuel_type_code,			
 NULLIF(physical_unit_label, '.') AS physical_unit_label,
 NULLIF(year, '.') AS year,
-NULLIF(quantity, '.') AS quantity,
+NULLIF(quantity, '.') AS petcoke_stock_quantity,
 {{extract_month('months')}} as month
 
 
 from {{source('staging','petcoke_stocks')}}
 unpivot(quantity for months in (	
-NULLIF(quantity_january, '.') AS quantity_january,			
-NULLIF(quantity_february, '.') AS quantity_february,			
-NULLIF(quantity_march, '.') AS quantity_march,			
-NULLIF(quantity_april, '.') AS quantity_april,			
-NULLIF(quantity_may, '.') AS quantity_may,			
-NULLIF(quantity_june, '.') AS quantity_june,			
-NULLIF(quantity_july, '.') AS quantity_july,			
-NULLIF(quantity_august, '.') AS quantity_august,			
-NULLIF(quantity_september, '.') AS quantity_september,			
-NULLIF(quantity_october, '.') AS quantity_october,			
-NULLIF(quantity_november, '.') AS quantity_november,			
-NULLIF(quantity_december, '.') AS quantity_december	))
+quantity_january,			
+quantity_february,			
+quantity_march,			
+quantity_april,			
+quantity_may,			
+quantity_june,			
+quantity_july,			
+quantity_august,			
+quantity_september,			
+quantity_october,			
+quantity_november,			
+quantity_december))
 
 
 

@@ -200,7 +200,7 @@ SELECT
     NULLIF(reported_fuel_type_code, '.') AS reported_fuel_type_code,
     NULLIF(physical_unit_label, '.') AS physical_unit_label,
     -- measured values
-    CAST(NULLIF(quantity_of_fuel_consumed, '.') AS FLOAT64) AS quantity_of_fuel_consumed,
+    CAST(NULLIF(quantity_of_fuel_consumed, '.') AS FLOAT64) AS quantity_of_boiler_fuel,
     CAST(NULLIF(heat_content_per_unit, '.') AS FLOAT64) AS heat_content_per_unit,
     CAST(NULLIF(sulfur_content, '.') AS FLOAT64) AS sulfur_content,
     CAST(NULLIF(ash_content, '.') AS FLOAT64) AS ash_content,
