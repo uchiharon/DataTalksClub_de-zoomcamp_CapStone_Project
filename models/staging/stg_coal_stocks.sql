@@ -17,9 +17,9 @@ NULLIF(sector_name, '.')AS sector_name,
 NULLIF(reported_fuel_type_code, '.')AS reported_fuel_type_code,			
 NULLIF(aer_fuel_type_code, '.')AS aer_fuel_type_code,			
 NULLIF(physical_unit_label, '.')AS physical_unit_label,
-CAST(NULLIF(quantity, '.') AS FLOAT64) AS quantity_coal_stock,
+CAST(NULLIF(quantity, '.') AS FLOAT64) AS coal_stock_quantity,
 NULLIF(year, '.')AS year,
-NULLIF(months, '.')AS months
+{{extract_month('months')}} as month
 
 from {{source('staging','coal_stocks')}}
 unpivot(quantity for months in (quantity_january,			

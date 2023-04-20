@@ -1,0 +1,54 @@
+version: 2
+
+models:
+  - name: dim_plant_frame
+    description: >
+      A dimension table that contains information about the various electric power 
+      plants in a region, such as their names, locations, types, and capacities.
+
+
+  - name: fact_boiler_fuel
+    description: >
+
+      A fact table that contains information about the fuel consumption and emissions
+      of boilers used in electric power generation.
+
+
+  - name: fact_energy_storage
+    description: >
+      A fact table that contains information about the use and performance of energy 
+      storage systems used in electric power generation.
+
+
+  - name: fact_fuel_recipts_and_cost
+    description: >
+      A fact table that contains information about the cost and quantity of fuel used 
+      in electric power generation, including receipts and inventory levels.
+
+  
+
+  - name: fact_generation_and_fuel
+    description: >
+      A fact table that contains information about the electric power generation 
+      process, including the amount of electricity generated, the types of fuels used, 
+      and emissions produced.
+
+
+
+  - name: fact_generator
+    description: >
+      A fact table that contains information about individual electric power generators, 
+      including their types, capacities, and performance metrics.
+
+
+  - name: fact_states_stocks
+    description: >
+      A fact table that contains information about the stocks and flows of electric power 
+      across different states or regions.
+
+
+
+  - name: fact_stocks
+    description: >
+      A fact table that contains information about the stocks and flows of electric power 
+      across different time periods, such as hourly or daily intervals.

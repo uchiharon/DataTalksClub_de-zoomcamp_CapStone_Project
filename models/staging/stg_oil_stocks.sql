@@ -17,7 +17,7 @@ NULLIF(reported_fuel_type_code, '.') AS reported_fuel_type_code,
 NULLIF(aer_fuel_type_code, '.') AS aer_fuel_type_code,			
 NULLIF(physical_unit_label, '.') AS physical_unit_label,	
 NULLIF(year, '.') AS year,
-NULLIF(quantity, '.') AS oil_stock_quantity,
+CAST(NULLIF(quantity, '.') AS FLOAT64) AS oil_stock_quantity,
 {{extract_month('months')}} as month
 
 FROM {{source('staging','oil_stocks')}}
