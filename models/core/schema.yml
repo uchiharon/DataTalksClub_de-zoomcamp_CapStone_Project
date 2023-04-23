@@ -1,0 +1,1126 @@
+version: 2
+
+models:
+  - name: dim_plant_frame
+    description: >
+      A dimension table that contains information about the various electric power 
+      plants in a region, such as their names, locations, types, and capacities.
+    columns:
+      - name: plant_id
+        description: Primary key for this table, EIA Plant Identification number. One to five digit numeric.
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: plant_state
+        description:  State the facility is located in. Two character alphanumeric (standard state postal codes).
+        tests:
+          - not_null:
+              severity: warn
+      
+              
+      - name: sector_number
+        description: >
+          EIA's internal consolidated NAICS sectors. For internal purposes, EIA consolidates the NAICS categories 
+          into seven groups.  
+          These are shown below in the Sector Codes and Names;
+          1	= Electric Utility: Traditional regulated electric utilities
+          2	= NAICS-22 Non-Cogen: Independent power producers which are not cogenerators
+          3	= NAICS-22 Cogen: Independent power producers which are cogenerators, but whose primary business purpose is the sale of electricity to the public
+          4	= Commercial NAICS Non-Cogen: Commercial non-cogeneration facilities that produce electric power, are connected to the gird, and can sell power to the public
+          5	= Commercial NAICS Cogen: Commercial cogeneration facilities that produce electric power, are connected to the grid, and can sell power to the public
+          6	= Industrial NAICS Non-Cogen: Industrial non-cogeneration facilities that produce electric power, are connected to the gird, and can sell power to the public
+          7	= Industrial NAICS Cogen: Industrial cogeneration facilities that produce electric power, are connected to the gird, and can sell power to the public
+        tests:
+          - accepted_values:
+              values: "{{ var('sector_number') }}"
+              severity: warn
+              quote: false
+
+      - name: naics_code
+        description: >
+          The facility’s North American Industrial Classification System (NAICS) code. Numeric. For information 
+          on the NAICS system, see:http://www.census.gov/epcd/www/naics.html
+        
+      - name: plant_name
+        description: >
+          Plant name. Alphanumeric.
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: combined_heat_and_power_status
+        description: >
+          Whether or not the plant is a combined heat & power facility (cogenerator). One character alphanumeric, “Y” or “N”
+        tests:
+          - accepted_values:
+              values: ['Y','N']
+         
+
+
+  - name: fact_boiler_fuel
+    description: >
+
+      A fact table that contains information about the fuel consumption and emissions
+      of boilers used in electric power generation.
+    columns:
+      - name: plant_id
+        description: >
+          EIA Plant Identification number. One to five digit numeric.
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: operator_name
+        description: >
+          The name of the entity which operates the plant. Alphanumeric.
+
+      - name: operator_id
+        description: >
+          The EIA operator identification number. Five digit numeric, padded with leading zeros.
+
+
+      - name: census_region
+        description: >
+          The census region the state is located in.Three to five character alphanumeric;
+          NEW	= New England
+          MAT	= Middle Atlantic
+          SAT	= South Atlantic
+          ESC	= East South Central
+          WSC	= West South Central
+          ENC	= East North Central
+          WNC	= West North Central
+          MTN	= Mountain
+          PACC	= Pacific Contiguous (Oregon, Washington, and California)
+          PACN	= Pacific Non-Contiguous (Alaska and Hawaii)
+        
+        tests:
+          - accepted_values:
+              values:
+                - "{{ var('census_region')}}"
+              severity: warn
+
+
+
+      - name: nerc_region
+        description: >
+          The North American Electric Reliability Council (NERC) region where the plant is located.Alphanumeric:
+          NPCC	= Northeast Power Coordinating Council
+          MRO	= Midwest Reliability Organization
+          SERC	= SERC Reliability Corporation
+          RFC	= Reliability First Corporation
+          SPP	= Southwest Power Pool
+          TRE	= Texas Regional Entity
+          FRCC	= Florida Reliability Coordinating Council
+          WECC	= Western Electricity Coordinating Council
+        tests:
+          - accepted_values:
+              values:
+                - "{{var('nerc_region')}}"
+
+      - name: boiler_id
+        description: >
+          Boiler identification code; Alphanumeric
+
+      - name: reported_prime_mover
+        description: >
+          Type of prime mover;
+          BA ->	Energy Storage, Battery
+          BT ->	Turbines Used in a Binary Cycle. Including those used for geothermal applications
+          CA ->	Combined-Cycle -- Steam Part
+          CE ->	Energy Storage, Compressed Air
+          CP ->	Energy Storage, Concentrated Solar Power
+          CS ->	Combined-Cycle Single-Shaft Combustion Turbine and Steam Turbine share of single generator
+          CT ->	Combined-Cycle Combustion Turbine Part
+          ES ->	Energy Storage, Other (Specify on Schedule 9, Comments)
+          FC ->	Fuel Cell
+          FW ->	Energy Storage, Flywheel
+          GT ->	Combustion (Gas) Turbine. Including Jet Engine design
+          HA ->	Hydrokinetic, Axial Flow Turbine
+          HB ->	Hydrokinetic, Wave Buoy
+          HK ->	Hydrokinetic, Other
+          HY ->	Hydraulic Turbine. Including turbines associated with delivery of water by pipeline.
+          IC ->	Internal Combustion (diesel, piston, reciprocating) Engine
+          PS ->	Energy Storage, Reversible Hydraulic Turbine (Pumped Storage)
+          OT ->	Other
+          ST ->	Steam Turbine. Including Nuclear, Geothermal, and Solar Steam (does not include Combined Cycle).
+          PV ->	Photovoltaic
+          WT ->	Wind Turbine, Onshore
+          WS ->	Wind Turbine, Offshore
+
+
+      - name: reported_fuel_type_code
+        description: >
+          The fuel code reported to EIA.Two or three letter alphanumeric:
+          AB ->	Agricultural By-Products
+          ANT ->	Anthracite Coal
+          BFG ->	Blast Furnace Gas
+          BIT ->	Bituminous Coal
+          BLQ ->	Black Liquor
+          DFO ->	Distillate Fuel Oil. Including diesel, No. 1, No. 2, and No. 4 fuel oils.
+          GEO ->	Geothermal
+          JF -> Jet Fuel
+          KER ->	Kerosene
+          LFG ->	Landfill Gas
+          LIG ->	Lignite Coal
+          MSB ->	Biogenic Municipal Solid Waste
+          MSN ->	Non-biogenic Municipal Solid Waste
+          MWH ->	Electricity used for energy storage
+          NG ->	Natural Gas
+          NUC ->	Nuclear. Including Uranium, Plutonium, and Thorium.
+          OBG ->	Other Biomass Gas. Including digester gas, methane, and other biomass gases.
+          OBL ->	Other Biomass Liquids
+          OBS ->	Other Biomass Solids
+          OG ->	Other Gas
+          OTH ->	Other Fuel
+          PC ->	Petroleum Coke
+          PG ->	Gaseous Propane
+          PUR ->	Purchased Steam
+          RC ->	Refined Coal
+          RFO ->	Residual Fuel Oil. Including No. 5 & 6 fuel oils and bunker C fuel oil.
+          SC ->	Coal-based Synfuel. Including briquettes, pellets, or extrusions, which are formed by binding materials or processes that recycle materials.
+          SGC ->	Coal-Derived Synthesis Gas
+          SGP ->	Synthesis Gas from Petroleum Coke
+          SLW ->	Sludge Waste
+          SUB ->	Subbituminous Coal
+          SUN ->	Solar
+          TDF ->	Tire-derived Fuels
+          WAT ->	Water at a Conventional Hydroelectric Turbine and water used in Wave Buoy Hydrokinetic Technology, current Hydrokinetic Technology, Tidal Hydrokinetic Technology, and Pumping Energy for Reversible (Pumped Storage) Hydroelectric Turbines.
+          WC ->	Waste/Other Coal. Including anthracite culm, bituminous gob, fine coal, lignite waste, waste coal.
+          WDL ->	Wood Waste Liquids, excluding Black Liquor. Including red liquor, sludge wood, spent sulfite liquor, and other wood-based liquids.
+          WDS ->	Wood/Wood Waste Solids. Including paper pellets, railroad ties, utility polies, wood chips, bark, and other wood waste solids.
+          WH ->	Waste Heat not directly attributed to a fuel source
+          WND ->	Wind
+          WO ->	Waste/Other Oil. Including crude oil, liquid butane, liquid propane, naphtha, oil waste, re-refined moto oil, sludge oil, tar oil, or other petroleum-based liquid wastes.
+
+
+      - name: physical_unit_label
+        description: >
+          The type of physical units fuel consumption is reported in. All consumption is reported 
+          in either short tons for solids, thousands of cubic feet for gases, and barrels for liquids:
+          mcf ->	for gases
+          short tons  ->	for solid
+          barrels	-> for liquids
+        tests:
+          - accepted_values:
+              values:
+                - "{{var('physical_unit_label')}}"
+              severity: warn
+
+
+
+      - name: quantity_of_fuel_consumed
+        description: >
+          Consumption of the fuel type specified in Column N, in physical units.Numeric.  Note: this 
+          is the total quantity consumed for both electricity and, in the case of combined heat and 
+          power plants, process steam production
+
+
+      - name: heat_content_per_unit
+        description: >
+          Heat content of the fuel in millions of Btus per physical unit to the nearest 0.001. Numeric
+
+      - name: sulfur_content
+        description: >
+          Sulfur content percentage by weight to the nearest 0.01 percent
+
+      - name: ash_content
+        description: >
+          Ash content percentage by weight to the nearest 0.1 percent
+
+      - name: year
+        description: >
+          Calendar Year for Data
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: month
+        description: >
+          Calendar Month for Data
+        tests:
+          - not_null:
+              severity: warn
+          - accepted_values:
+              values: "{{var('month')}}"
+              severity: warn
+
+
+
+  - name: fact_energy_storage
+    description: >
+      A fact table that contains information about the use and performance of energy 
+      storage systems used in electric power generation.
+    columns:
+      - name: plant_id
+        description: >
+          EIA Plant Identification number. One to five digit numeric.
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: operator_name
+        description: >
+          The name of the entity which operates the plant. Alphanumeric.
+
+      - name: operator_id
+        description: >
+          The EIA operator identification number. Five digit numeric, padded with leading zeros.
+      
+      - name: census_region
+        description: >
+          The census region the state is located in.Three to five character alphanumeric;
+          NEW	= New England
+          MAT	= Middle Atlantic
+          SAT	= South Atlantic
+          ESC	= East South Central
+          WSC	= West South Central
+          ENC	= East North Central
+          WNC	= West North Central
+          MTN	= Mountain
+          PACC	= Pacific Contiguous (Oregon, Washington, and California)
+          PACN	= Pacific Non-Contiguous (Alaska and Hawaii)
+
+      - name: nerc_region
+        description: >
+          The North American Electric Reliability Council (NERC) region where the plant is located.Alphanumeric:
+          NPCC	= Northeast Power Coordinating Council
+          MRO	= Midwest Reliability Organization
+          SERC	= SERC Reliability Corporation
+          RFC	= Reliability First Corporation
+          SPP	= Southwest Power Pool
+          TRE	= Texas Regional Entity
+          FRCC	= Florida Reliability Coordinating Council
+          WECC	= Western Electricity Coordinating Council
+
+
+      - name: reported_prime_mover
+        description: >
+          Type of prime mover;
+          BA ->	Energy Storage, Battery
+          BT ->	Turbines Used in a Binary Cycle. Including those used for geothermal applications
+          CA ->	Combined-Cycle -- Steam Part
+          CE ->	Energy Storage, Compressed Air
+          CP ->	Energy Storage, Concentrated Solar Power
+          CS ->	Combined-Cycle Single-Shaft Combustion Turbine and Steam Turbine share of single generator
+          CT ->	Combined-Cycle Combustion Turbine Part
+          ES ->	Energy Storage, Other (Specify on Schedule 9, Comments)
+          FC ->	Fuel Cell
+          FW ->	Energy Storage, Flywheel
+          GT ->	Combustion (Gas) Turbine. Including Jet Engine design
+          HA ->	Hydrokinetic, Axial Flow Turbine
+          HB ->	Hydrokinetic, Wave Buoy
+          HK ->	Hydrokinetic, Other
+          HY ->	Hydraulic Turbine. Including turbines associated with delivery of water by pipeline.
+          IC ->	Internal Combustion (diesel, piston, reciprocating) Engine
+          PS ->	Energy Storage, Reversible Hydraulic Turbine (Pumped Storage)
+          OT ->	Other
+          ST ->	Steam Turbine. Including Nuclear, Geothermal, and Solar Steam (does not include Combined Cycle).
+          PV ->	Photovoltaic
+          WT ->	Wind Turbine, Onshore
+          WS ->	Wind Turbine, Offshore
+
+      - name: reported_fuel_type_code
+        description: >
+          The fuel code reported to EIA.Two or three letter alphanumeric:
+          AB ->	Agricultural By-Products
+          ANT ->	Anthracite Coal
+          BFG ->	Blast Furnace Gas
+          BIT ->	Bituminous Coal
+          BLQ ->	Black Liquor
+          DFO ->	Distillate Fuel Oil. Including diesel, No. 1, No. 2, and No. 4 fuel oils.
+          GEO ->	Geothermal
+          JF -> Jet Fuel
+          KER ->	Kerosene
+          LFG ->	Landfill Gas
+          LIG ->	Lignite Coal
+          MSB ->	Biogenic Municipal Solid Waste
+          MSN ->	Non-biogenic Municipal Solid Waste
+          MWH ->	Electricity used for energy storage
+          NG ->	Natural Gas
+          NUC ->	Nuclear. Including Uranium, Plutonium, and Thorium.
+          OBG ->	Other Biomass Gas. Including digester gas, methane, and other biomass gases.
+          OBL ->	Other Biomass Liquids
+          OBS ->	Other Biomass Solids
+          OG ->	Other Gas
+          OTH ->	Other Fuel
+          PC ->	Petroleum Coke
+          PG ->	Gaseous Propane
+          PUR ->	Purchased Steam
+          RC ->	Refined Coal
+          RFO ->	Residual Fuel Oil. Including No. 5 & 6 fuel oils and bunker C fuel oil.
+          SC ->	Coal-based Synfuel. Including briquettes, pellets, or extrusions, which are formed by binding materials or processes that recycle materials.
+          SGC ->	Coal-Derived Synthesis Gas
+          SGP ->	Synthesis Gas from Petroleum Coke
+          SLW ->	Sludge Waste
+          SUB ->	Subbituminous Coal
+          SUN ->	Solar
+          TDF ->	Tire-derived Fuels
+          WAT ->	Water at a Conventional Hydroelectric Turbine and water used in Wave Buoy Hydrokinetic Technology, current Hydrokinetic Technology, Tidal Hydrokinetic Technology, and Pumping Energy for Reversible (Pumped Storage) Hydroelectric Turbines.
+          WC ->	Waste/Other Coal. Including anthracite culm, bituminous gob, fine coal, lignite waste, waste coal.
+          WDL ->	Wood Waste Liquids, excluding Black Liquor. Including red liquor, sludge wood, spent sulfite liquor, and other wood-based liquids.
+          WDS ->	Wood/Wood Waste Solids. Including paper pellets, railroad ties, utility polies, wood chips, bark, and other wood waste solids.
+          WH ->	Waste Heat not directly attributed to a fuel source
+          WND ->	Wind
+          WO ->	Waste/Other Oil. Including crude oil, liquid butane, liquid propane, naphtha, oil waste, re-refined moto oil, sludge oil, tar oil, or other petroleum-based liquid wastes.
+
+
+      - name: aer_fuel_type_code
+        description: >
+          A partial aggregation of the reported fuel type codes into larger categories used by EIA in, for example, 
+          the Annual Energy Review (AER).Two or three letter alphanumeric.  See the Fuel Code table (Table 5), below:
+          SUN ->	Solar PV and thermal
+          COL ->	Coal 
+          DFO ->	Distillate Petroleum
+          GEO ->	Geothermal
+          HPS ->	Hydroelectric Pumped Storage
+          HYC ->	Hydroelectric Conventional
+          MLG ->	Biogenic Municipal Solid Waste and Landfill Gas
+          NG ->	Natural Gas
+          NUC ->	Nuclear
+          OOG ->	Other Gases
+          ORW ->	Other Renewables 
+          OTH ->	Other (including nonbiogenic MSW)
+          PC ->	Petroleum Coke
+          RFO ->	Residual Petroleum
+          WND ->	Wind
+          WOC ->	Waste Coal
+          WOO ->	Waste Oil
+          WWW ->	Wood and Wood Waste
+
+
+
+      - name: physical_unit_label
+        description: >
+          The type of physical units fuel consumption is reported in. All consumption is reported 
+          in either short tons for solids, thousands of cubic feet for gases, and barrels for liquids:
+          mcf ->	for gases
+          short tons  ->	for solid
+          barrels	-> for liquids
+        tests:
+          - accepted_values:
+              values:
+                - "{{var('physical_unit_label')}}"
+              severity: warn
+
+
+      - name: quantity_of_energy_stored
+        description: >
+          Quantity of the fuel type stored in physical units.
+
+      - name: elec_quantity
+        description: >
+          Storage for electric generation of the fuel type in physical units.Numeric.
+
+      - name: gross_gen
+        description: >
+          Gross energy generated
+
+      - name: net_gen
+        description: >
+          Net energy generated
+
+      - name: month
+        description: >
+          Calendar Month for Data
+
+      - name: year
+        description: >
+          Calendar Year for Data
+
+
+
+  - name: fact_fuel_recipts_and_cost
+    description: >
+      A fact table that contains information about the cost and quantity of fuel used 
+      in electric power generation, including receipts and inventory levels.
+
+    columns:
+      - name: plant_id
+        description: >
+          EIA Plant Identification number. One to five digit numeric.
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: purchase_type
+        description: >
+          Designates the purchase type under which receipts occurred in the reporting month. 
+          One or two character alphanumeric:
+          C ->	Contract
+          NC ->	New Contract
+          S ->	Spot Purchase
+        tests:
+          - accepted_values:
+              values:
+                - "{{var('purchase_type')}}"
+              severity: warn
+
+
+      - name: contract_expiration_date
+        description: >
+          Date contract expires. Format:  MMYY
+      
+      - name: energy_source
+        description: >
+          The fuel code associated with the fuel receipt. Two or three character alphanumeric:
+          ANT ->	Anthracite Coal
+          BIT ->	Bituminous Coal
+          DFO ->	Distillate Fuel Oil. Including diesel, No. 1, No. 2, and No. 4 fuel oils.
+          LIG ->	Lignite Coal
+          NG ->	Natural Gas
+          PC ->	Petroleum Coke
+          RC ->	Refined Coal
+          RFO ->	Residual Fuel Oil. Including No. 5 & 6 fuel oils and bunker C fuel oil.
+          SC ->	Coal-based Synfuel. Including briquettes, pellets, or extrusions, which are formed by binding materials or processes that recycle materials.
+          SUB ->	Subbituminous Coal
+          WC ->	Waste/Other Coal. Including anthracite culm, bituminous gob, fine coal, lignite waste, waste coal.
+          WO 	Waste/Other Oil. Including crude oil, liquid butane, liquid propane, naphtha, oil waste, re-refined moto oil, sludge oil, tar oil, or other petroleum-based liquid wastes.
+
+
+      - name: fuel_group
+        description: >
+          Groups the energy sources into fuel groups that are located in the Electric Power Monthly:  
+          Coal, Natural Gas, Petroleum, Petroleum Coke. 
+
+      - name: coalmine_type
+        description: >
+          Type of Coal Mine:
+          P ->	Preperation Plant
+          S ->	Surface
+          U ->	Underground
+          U/S ->	Both an underground and surface mine with most coal extracted from underground
+          S/U ->	Both an underground and surface mine with most coal extracted from surface
+
+
+      - name: coalmine_state
+        description: >
+          State abbreviation related to coal mine location. Country abbreviations are also listed under 
+          this category and are as follows:
+          AU ->	Australia
+          CL ->	Columbia
+          CN ->	Canada
+          IS ->	Indonesia
+          PL ->	Poland
+          RS ->	Russia
+          UK ->	United Kingdom
+          VZ ->	Venezula
+          OC ->	Other Country
+
+
+      - name: coalmine_county
+        description: >
+          Mine Location. County, listed by County FIPS code, where coal is removed from the mine. Three alphanumeric.
+
+      - name: coalmine_msha_id
+        description: >
+          Mine Safety and Health Administration Identification Number. Seven digit alphanumeric. 
+          NA = Not available, including foreign mines and tipple/loading points or docks with multiple 
+          mine or undetermined .
+
+      - name: coalmine_name
+        description: >
+          Name of the Mine. Alphanumeric
+
+      - name: supplier
+        description: >
+          Company that sold the fuel to the plant or, in the case of NG, pipline owner.
+
+      - name: quantity
+        description: >
+          Quanity of fuel received in tons, barrel, or Mcf. Numeric
+
+      - name: average_heat_content
+        description: >
+          Heat content of the fuel in millions of Btus per physical unit to the nearest 0.01 percent.
+
+      - name: average_sulfur_content
+        description: >
+          Sulfur content percentage by weightto the nearest 0.01 percent.
+
+      - name: average_ash_content
+        description: >
+          Ash content percentage by weight to the nearest 0.1 percent.
+
+      - name: average_mercury_content
+        description: >
+          Mercury content in parts per million (ppm) to the nearest 0.001 ppm. Numeric.
+
+      - name: fuel_cost
+        description: >
+          All costs incurred in the purchase and delivery of the fuel to the plant in cents per 
+          million Btu(MMBtu) to the nearest 0.1 cent. Numeric.
+
+      - name: regulated
+        description: >
+          Three character code designating the regulatory:
+          REG ->	Regulated Electric Utility
+          UNR ->	Non-Regulated Independent Power Plant or Nonutility Plant.
+        tests:
+          - accepted_values:
+              values:
+                - "{{var('regulated')}}"
+              severity: warn
+
+      - name: operator_name
+        description: >
+          The name of the utility or company that operates the plant. Alphanumeric.
+
+      - name: operator_id
+        description: >
+          The EIA utility identification number.Alphanumeric.
+
+      - name: primary_transportation_mode
+        description: >
+          Mode for the longest / second longest distance:
+          RR ->	Rail: Shipments of fuel moved to consumers by rail (private or public/commercial). Included is coal hauled to or away from a railroad siding by truck if the truck did not use public roads.
+          RV ->	River:  Shipments of fuel moved to consumers via river by barge.  Not included are shipments to Great Lakes coal loading docks, tidewater piers, or coastal ports. 
+          GL ->	Great Lakes:  Shipments of coal moved to consumers via the Great Lakes. These shipments are moved via the Great Lakes coal loading docks, which are identified by name and location as follows:  Conneaut Coal Storage & Transfer, Conneaut, Ohio;  NS Coal Dock (Ashtabula Coal Dock), Ashtabula, Ohio;  Sandusky Coal Pier, Sandusky, Ohio;  Toledo Docks, Toledo, Ohio; KCBX Terminals Inc., Chicago, Illinois;  Superior Midwest Energy Terminal, Superior, Wisconsin
+          TP ->	Tidewater Piers and Coastal Ports:  Shipments of coal moved to Tidewater Piers and Coastal Ports for further shipments to consumers via coastal water or ocean.  The Tidewater Piers and Coastal Ports are identified by name and location as follows:  Dominion Terminal Associates, Newport News, Virginia; McDuffie Coal Terminal, Mobile, Alabama;  IC Railmarine Terminal, Convent, Louisiana;  International Marine Terminals, Myrtle Grove, Louisiana;  Cooper/T. Smith Stevedoring Co. Inc., Darrow, Louisiana;  Seward Terminal Inc., Seward, Alaska;  Los Angeles Export Terminal, Inc., Los Angeles, California;  Levin-Richmond Terminal Corp., Richmond, California; Baltimore Terminal, Baltimore, Maryland;  Norfolk Southern Lamberts Point P-6, Norfolk, Virginia;  Chesapeake Bay Piers, Baltimore, Maryland;  Pier IX Terminal Company, Newport News, Virginia;  Electro-Coal Transport Corp., Davant, Louisiana
+          WT ->	Water: Shipments of fuel moved to consumers by other waterways.
+          TR ->	Truck: Shipments of fuel moved to consumers by truck.  Not included is fuel hauled to or away from a railroad siding by truck on non-public roads.
+          TC ->	Tramway/Conveyor: Shipments of fuel moved to consumers by tramway or conveyor.
+          SP ->	Slurry Pipeline: Shipments of coal moved to consumers by slurry pipeline.
+          PL ->	Pipeline: Shipments of fuel moved to consumers by pipeline
+
+
+      - name: secondary_transportation_mode
+        description: >
+          Mode for the longest / second longest distance:
+          RR ->	Rail: Shipments of fuel moved to consumers by rail (private or public/commercial). Included is coal hauled to or away from a railroad siding by truck if the truck did not use public roads.
+          RV ->	River:  Shipments of fuel moved to consumers via river by barge.  Not included are shipments to Great Lakes coal loading docks, tidewater piers, or coastal ports. 
+          GL ->	Great Lakes:  Shipments of coal moved to consumers via the Great Lakes. These shipments are moved via the Great Lakes coal loading docks, which are identified by name and location as follows:  Conneaut Coal Storage & Transfer, Conneaut, Ohio;  NS Coal Dock (Ashtabula Coal Dock), Ashtabula, Ohio;  Sandusky Coal Pier, Sandusky, Ohio;  Toledo Docks, Toledo, Ohio; KCBX Terminals Inc., Chicago, Illinois;  Superior Midwest Energy Terminal, Superior, Wisconsin
+          TP ->	Tidewater Piers and Coastal Ports:  Shipments of coal moved to Tidewater Piers and Coastal Ports for further shipments to consumers via coastal water or ocean.  The Tidewater Piers and Coastal Ports are identified by name and location as follows:  Dominion Terminal Associates, Newport News, Virginia; McDuffie Coal Terminal, Mobile, Alabama;  IC Railmarine Terminal, Convent, Louisiana;  International Marine Terminals, Myrtle Grove, Louisiana;  Cooper/T. Smith Stevedoring Co. Inc., Darrow, Louisiana;  Seward Terminal Inc., Seward, Alaska;  Los Angeles Export Terminal, Inc., Los Angeles, California;  Levin-Richmond Terminal Corp., Richmond, California; Baltimore Terminal, Baltimore, Maryland;  Norfolk Southern Lamberts Point P-6, Norfolk, Virginia;  Chesapeake Bay Piers, Baltimore, Maryland;  Pier IX Terminal Company, Newport News, Virginia;  Electro-Coal Transport Corp., Davant, Louisiana
+          WT ->	Water: Shipments of fuel moved to consumers by other waterways.
+          TR ->	Truck: Shipments of fuel moved to consumers by truck.  Not included is fuel hauled to or away from a railroad siding by truck on non-public roads.
+          TC ->	Tramway/Conveyor: Shipments of fuel moved to consumers by tramway or conveyor.
+          SP ->	Slurry Pipeline: Shipments of coal moved to consumers by slurry pipeline.
+          PL ->	Pipeline: Shipments of fuel moved to consumers by pipeline
+
+      - name: natural_gas_supply_contract_type
+        description: >
+          Contract type for natrual gas capacity service:
+          F ->	Firm
+          I ->	Interruptible
+
+
+
+      - name: natural_gas_delivery_contract_type
+        description: >
+          Contract type for natrual gas capacity service:
+          F ->	Firm
+          I ->	Interruptible
+
+      - name: moisture_content,			
+        description: >
+          moisture content
+
+      - name: chlorine_content,			
+        description: >
+          cholrine content
+
+      - name: month
+        description: >
+          Calendar Month for Data
+
+      - name: year
+        description: >
+          Calendar Year for Data
+
+
+  
+
+  - name: fact_generation_and_fuel
+    description: >
+      A fact table that contains information about the electric power generation 
+      process, including the amount of electricity generated, the types of fuels used, 
+      and emissions produced.
+    
+    columns:
+      - name: plant_id
+        description: >
+          EIA Plant Identification number. One to five digit numeric.
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: nuclear_unit_id
+        description: >
+          For nuclear plants only, the unit number .One digit numeric. Nuclear plants are the 
+          only type of plants for which data are shown explicitly at the generating unit level.
+
+
+      - name: operator_name
+        description: >
+          The name of the entity which operates the plant. Alphanumeric.
+
+      - name: operator_id
+        description: >
+          The EIA operator identification number. Five digit numeric, padded with leading zeros.
+      
+      - name: census_region
+        description: >
+          The census region the state is located in.Three to five character alphanumeric;
+          NEW	= New England
+          MAT	= Middle Atlantic
+          SAT	= South Atlantic
+          ESC	= East South Central
+          WSC	= West South Central
+          ENC	= East North Central
+          WNC	= West North Central
+          MTN	= Mountain
+          PACC	= Pacific Contiguous (Oregon, Washington, and California)
+          PACN	= Pacific Non-Contiguous (Alaska and Hawaii)
+
+      - name: nerc_region
+        description: >
+          The North American Electric Reliability Council (NERC) region where the plant is located.Alphanumeric:
+          NPCC	= Northeast Power Coordinating Council
+          MRO	= Midwest Reliability Organization
+          SERC	= SERC Reliability Corporation
+          RFC	= Reliability First Corporation
+          SPP	= Southwest Power Pool
+          TRE	= Texas Regional Entity
+          FRCC	= Florida Reliability Coordinating Council
+          WECC	= Western Electricity Coordinating Council
+
+
+      - name: reported_prime_mover
+        description: >
+          Type of prime mover;
+          BA ->	Energy Storage, Battery
+          BT ->	Turbines Used in a Binary Cycle. Including those used for geothermal applications
+          CA ->	Combined-Cycle -- Steam Part
+          CE ->	Energy Storage, Compressed Air
+          CP ->	Energy Storage, Concentrated Solar Power
+          CS ->	Combined-Cycle Single-Shaft Combustion Turbine and Steam Turbine share of single generator
+          CT ->	Combined-Cycle Combustion Turbine Part
+          ES ->	Energy Storage, Other (Specify on Schedule 9, Comments)
+          FC ->	Fuel Cell
+          FW ->	Energy Storage, Flywheel
+          GT ->	Combustion (Gas) Turbine. Including Jet Engine design
+          HA ->	Hydrokinetic, Axial Flow Turbine
+          HB ->	Hydrokinetic, Wave Buoy
+          HK ->	Hydrokinetic, Other
+          HY ->	Hydraulic Turbine. Including turbines associated with delivery of water by pipeline.
+          IC ->	Internal Combustion (diesel, piston, reciprocating) Engine
+          PS ->	Energy Storage, Reversible Hydraulic Turbine (Pumped Storage)
+          OT ->	Other
+          ST ->	Steam Turbine. Including Nuclear, Geothermal, and Solar Steam (does not include Combined Cycle).
+          PV ->	Photovoltaic
+          WT ->	Wind Turbine, Onshore
+          WS ->	Wind Turbine, Offshore
+
+      - name: reported_fuel_type_code
+        description: >
+          The fuel code reported to EIA.Two or three letter alphanumeric:
+          AB ->	Agricultural By-Products
+          ANT ->	Anthracite Coal
+          BFG ->	Blast Furnace Gas
+          BIT ->	Bituminous Coal
+          BLQ ->	Black Liquor
+          DFO ->	Distillate Fuel Oil. Including diesel, No. 1, No. 2, and No. 4 fuel oils.
+          GEO ->	Geothermal
+          JF -> Jet Fuel
+          KER ->	Kerosene
+          LFG ->	Landfill Gas
+          LIG ->	Lignite Coal
+          MSB ->	Biogenic Municipal Solid Waste
+          MSN ->	Non-biogenic Municipal Solid Waste
+          MWH ->	Electricity used for energy storage
+          NG ->	Natural Gas
+          NUC ->	Nuclear. Including Uranium, Plutonium, and Thorium.
+          OBG ->	Other Biomass Gas. Including digester gas, methane, and other biomass gases.
+          OBL ->	Other Biomass Liquids
+          OBS ->	Other Biomass Solids
+          OG ->	Other Gas
+          OTH ->	Other Fuel
+          PC ->	Petroleum Coke
+          PG ->	Gaseous Propane
+          PUR ->	Purchased Steam
+          RC ->	Refined Coal
+          RFO ->	Residual Fuel Oil. Including No. 5 & 6 fuel oils and bunker C fuel oil.
+          SC ->	Coal-based Synfuel. Including briquettes, pellets, or extrusions, which are formed by binding materials or processes that recycle materials.
+          SGC ->	Coal-Derived Synthesis Gas
+          SGP ->	Synthesis Gas from Petroleum Coke
+          SLW ->	Sludge Waste
+          SUB ->	Subbituminous Coal
+          SUN ->	Solar
+          TDF ->	Tire-derived Fuels
+          WAT ->	Water at a Conventional Hydroelectric Turbine and water used in Wave Buoy Hydrokinetic Technology, current Hydrokinetic Technology, Tidal Hydrokinetic Technology, and Pumping Energy for Reversible (Pumped Storage) Hydroelectric Turbines.
+          WC ->	Waste/Other Coal. Including anthracite culm, bituminous gob, fine coal, lignite waste, waste coal.
+          WDL ->	Wood Waste Liquids, excluding Black Liquor. Including red liquor, sludge wood, spent sulfite liquor, and other wood-based liquids.
+          WDS ->	Wood/Wood Waste Solids. Including paper pellets, railroad ties, utility polies, wood chips, bark, and other wood waste solids.
+          WH ->	Waste Heat not directly attributed to a fuel source
+          WND ->	Wind
+          WO ->	Waste/Other Oil. Including crude oil, liquid butane, liquid propane, naphtha, oil waste, re-refined moto oil, sludge oil, tar oil, or other petroleum-based liquid wastes.
+
+
+      - name: aer_fuel_type_code
+        description: >
+          A partial aggregation of the reported fuel type codes into larger categories used by EIA in, for example, 
+          the Annual Energy Review (AER).Two or three letter alphanumeric.  See the Fuel Code table (Table 5), below:
+          SUN ->	Solar PV and thermal
+          COL ->	Coal 
+          DFO ->	Distillate Petroleum
+          GEO ->	Geothermal
+          HPS ->	Hydroelectric Pumped Storage
+          HYC ->	Hydroelectric Conventional
+          MLG ->	Biogenic Municipal Solid Waste and Landfill Gas
+          NG ->	Natural Gas
+          NUC ->	Nuclear
+          OOG ->	Other Gases
+          ORW ->	Other Renewables 
+          OTH ->	Other (including nonbiogenic MSW)
+          PC ->	Petroleum Coke
+          RFO ->	Residual Petroleum
+          WND ->	Wind
+          WOC ->	Waste Coal
+          WOO ->	Waste Oil
+          WWW ->	Wood and Wood Waste
+
+
+
+      - name: physical_unit_label
+        description: >
+          The type of physical units fuel consumption is reported in. All consumption is reported 
+          in either short tons for solids, thousands of cubic feet for gases, and barrels for liquids:
+          mcf ->	for gases
+          short tons  ->	for solid
+          barrels	-> for liquids
+        tests:
+          - accepted_values:
+              values:
+                - "{{var('physical_unit_label')}}"
+              severity: warn
+
+
+      - name: quantity
+        description: >
+          Consumption of the fuel type in physical units.Numeric.  Note: this is the total quantity 
+          consumed for both electricity and, in the case of combined heat and power plants, process 
+          steam production.
+
+
+      - name: elec_quantity
+        description: >
+          Consumption for electric generation of the fuel type in physical units.Numeric.
+
+      - name: mmbtuper_unit
+        description: >
+          Heat content of the fuel in millions of Btus per physical unit.Numeric.
+
+      - name: tot_mmbtu
+        description: >
+          Total consumption of the fuel in millions of Btus.Numeric   Note: this is the total quantity 
+          consumed for both electricity and, in the case of combined heat and power plants, process 
+          steam production.
+      
+      - name: elec_mmbtu
+        description: >
+          Consumption of fuel in millions of Btus for the purpose of generating electricity.These fields 
+          are most relevant to combined heat and power plants.  For non-combined heat and power plants, 
+          the data in these fields and in columns AK through AV (total fuel consumed) will be identical.
+
+
+      - name: netgen
+        description: >
+          Net generation of electricity in megawatthours (MWh).Numeric.  This is total electrical output 
+          net of station service.  In the case of combined heat and power plants, this value is intended to 
+          include internal consumption of electricity for the purposes of a production process, as well as 
+          power put on the grid.
+
+
+      - name: month
+        description: >
+          Calendar Month for Data
+
+      - name: year
+        description: >
+          Calendar Year for Data
+
+
+
+
+  - name: fact_generator
+    description: >
+      A fact table that contains information about individual electric power generators, 
+      including their types, capacities, and performance metrics.
+
+    columns:
+      - name: plant_id
+        description: >
+          EIA Plant Identification number. One to five digit numeric.
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: operator_name
+        description: >
+          The name of the entity which operates the plant. Alphanumeric.
+
+      - name: operator_id
+        description: >
+          The EIA operator identification number. Five digit numeric, padded with leading zeros.
+      
+      - name: census_region
+        description: >
+          The census region the state is located in.Three to five character alphanumeric;
+          NEW	= New England
+          MAT	= Middle Atlantic
+          SAT	= South Atlantic
+          ESC	= East South Central
+          WSC	= West South Central
+          ENC	= East North Central
+          WNC	= West North Central
+          MTN	= Mountain
+          PACC	= Pacific Contiguous (Oregon, Washington, and California)
+          PACN	= Pacific Non-Contiguous (Alaska and Hawaii)
+
+      - name: nerc_region
+        description: >
+          The North American Electric Reliability Council (NERC) region where the plant is located.Alphanumeric:
+          NPCC	= Northeast Power Coordinating Council
+          MRO	= Midwest Reliability Organization
+          SERC	= SERC Reliability Corporation
+          RFC	= Reliability First Corporation
+          SPP	= Southwest Power Pool
+          TRE	= Texas Regional Entity
+          FRCC	= Florida Reliability Coordinating Council
+          WECC	= Western Electricity Coordinating Council
+
+
+      - name: reported_prime_mover
+        description: >
+          Type of prime mover;
+          BA ->	Energy Storage, Battery
+          BT ->	Turbines Used in a Binary Cycle. Including those used for geothermal applications
+          CA ->	Combined-Cycle -- Steam Part
+          CE ->	Energy Storage, Compressed Air
+          CP ->	Energy Storage, Concentrated Solar Power
+          CS ->	Combined-Cycle Single-Shaft Combustion Turbine and Steam Turbine share of single generator
+          CT ->	Combined-Cycle Combustion Turbine Part
+          ES ->	Energy Storage, Other (Specify on Schedule 9, Comments)
+          FC ->	Fuel Cell
+          FW ->	Energy Storage, Flywheel
+          GT ->	Combustion (Gas) Turbine. Including Jet Engine design
+          HA ->	Hydrokinetic, Axial Flow Turbine
+          HB ->	Hydrokinetic, Wave Buoy
+          HK ->	Hydrokinetic, Other
+          HY ->	Hydraulic Turbine. Including turbines associated with delivery of water by pipeline.
+          IC ->	Internal Combustion (diesel, piston, reciprocating) Engine
+          PS ->	Energy Storage, Reversible Hydraulic Turbine (Pumped Storage)
+          OT ->	Other
+          ST ->	Steam Turbine. Including Nuclear, Geothermal, and Solar Steam (does not include Combined Cycle).
+          PV ->	Photovoltaic
+          WT ->	Wind Turbine, Onshore
+          WS ->	Wind Turbine, Offshore
+
+      - name: generator_id
+        description: >
+          Generator identification codem Alphanumeric
+
+      - name: net_generator_generation
+        description: >
+          Net generation for specified month of electricity in megawatthours (MWh). Numeric.
+
+      - name: month
+        description: >
+          Calendar Month for Data
+
+      - name: year
+        description: >
+          Calendar Year for Data
+
+      
+
+
+  - name: fact_states_stocks
+    description: >
+      A fact table that contains information about the stocks and flows of electric power 
+      across different states or regions.
+    columns:
+      - name: census_division_and_state
+        description: >
+          The census region and state the facility is located in
+
+      - name: coal_stocks
+        description: >
+          Coal stock in Thousand Tons
+
+      - name: oil_stocks
+        description: >
+          Petroleum Liquids stock in Thousand Barrels
+      
+      - name: petcoke
+        description: >
+          Petroleum Coke stock in Thousand Barrels
+
+      - name: month
+        description: >
+          Calendar month for Data
+
+      - name: year
+        description: >
+          Calendar Year for Data
+        tests:
+          - not_null:
+              severity: warn
+
+
+
+
+  - name: fact_stocks
+    description: >
+      A fact table that contains information about the stocks and flows of electric power 
+      across different time periods, such as hourly or daily intervals.
+
+    columns:
+      - name: plant_id
+        description: >
+          EIA Plant Identification number. One to five digit numeric.
+        tests:
+          - not_null:
+              severity: warn
+
+      - name: operator_name
+        description: >
+          The name of the entity which operates the plant. Alphanumeric.
+
+      - name: operator_id
+        description: >
+          The EIA operator identification number. Five digit numeric, padded with leading zeros.
+      
+      - name: census_region
+        description: >
+          The census region the state is located in.Three to five character alphanumeric;
+          NEW	= New England
+          MAT	= Middle Atlantic
+          SAT	= South Atlantic
+          ESC	= East South Central
+          WSC	= West South Central
+          ENC	= East North Central
+          WNC	= West North Central
+          MTN	= Mountain
+          PACC	= Pacific Contiguous (Oregon, Washington, and California)
+          PACN	= Pacific Non-Contiguous (Alaska and Hawaii)
+
+      - name: nerc_region
+        description: >
+          The North American Electric Reliability Council (NERC) region where the plant is located.Alphanumeric:
+          NPCC	= Northeast Power Coordinating Council
+          MRO	= Midwest Reliability Organization
+          SERC	= SERC Reliability Corporation
+          RFC	= Reliability First Corporation
+          SPP	= Southwest Power Pool
+          TRE	= Texas Regional Entity
+          FRCC	= Florida Reliability Coordinating Council
+          WECC	= Western Electricity Coordinating Council
+
+
+      
+
+      - name: reported_fuel_type_code
+        description: >
+          The fuel code reported to EIA.Two or three letter alphanumeric:
+          AB ->	Agricultural By-Products
+          ANT ->	Anthracite Coal
+          BFG ->	Blast Furnace Gas
+          BIT ->	Bituminous Coal
+          BLQ ->	Black Liquor
+          DFO ->	Distillate Fuel Oil. Including diesel, No. 1, No. 2, and No. 4 fuel oils.
+          GEO ->	Geothermal
+          JF -> Jet Fuel
+          KER ->	Kerosene
+          LFG ->	Landfill Gas
+          LIG ->	Lignite Coal
+          MSB ->	Biogenic Municipal Solid Waste
+          MSN ->	Non-biogenic Municipal Solid Waste
+          MWH ->	Electricity used for energy storage
+          NG ->	Natural Gas
+          NUC ->	Nuclear. Including Uranium, Plutonium, and Thorium.
+          OBG ->	Other Biomass Gas. Including digester gas, methane, and other biomass gases.
+          OBL ->	Other Biomass Liquids
+          OBS ->	Other Biomass Solids
+          OG ->	Other Gas
+          OTH ->	Other Fuel
+          PC ->	Petroleum Coke
+          PG ->	Gaseous Propane
+          PUR ->	Purchased Steam
+          RC ->	Refined Coal
+          RFO ->	Residual Fuel Oil. Including No. 5 & 6 fuel oils and bunker C fuel oil.
+          SC ->	Coal-based Synfuel. Including briquettes, pellets, or extrusions, which are formed by binding materials or processes that recycle materials.
+          SGC ->	Coal-Derived Synthesis Gas
+          SGP ->	Synthesis Gas from Petroleum Coke
+          SLW ->	Sludge Waste
+          SUB ->	Subbituminous Coal
+          SUN ->	Solar
+          TDF ->	Tire-derived Fuels
+          WAT ->	Water at a Conventional Hydroelectric Turbine and water used in Wave Buoy Hydrokinetic Technology, current Hydrokinetic Technology, Tidal Hydrokinetic Technology, and Pumping Energy for Reversible (Pumped Storage) Hydroelectric Turbines.
+          WC ->	Waste/Other Coal. Including anthracite culm, bituminous gob, fine coal, lignite waste, waste coal.
+          WDL ->	Wood Waste Liquids, excluding Black Liquor. Including red liquor, sludge wood, spent sulfite liquor, and other wood-based liquids.
+          WDS ->	Wood/Wood Waste Solids. Including paper pellets, railroad ties, utility polies, wood chips, bark, and other wood waste solids.
+          WH ->	Waste Heat not directly attributed to a fuel source
+          WND ->	Wind
+          WO ->	Waste/Other Oil. Including crude oil, liquid butane, liquid propane, naphtha, oil waste, re-refined moto oil, sludge oil, tar oil, or other petroleum-based liquid wastes.
+
+
+      - name: aer_fuel_type_code
+        description: >
+          A partial aggregation of the reported fuel type codes into larger categories used by EIA in, for example, 
+          the Annual Energy Review (AER).Two or three letter alphanumeric.  See the Fuel Code table (Table 5), below:
+          SUN ->	Solar PV and thermal
+          COL ->	Coal 
+          DFO ->	Distillate Petroleum
+          GEO ->	Geothermal
+          HPS ->	Hydroelectric Pumped Storage
+          HYC ->	Hydroelectric Conventional
+          MLG ->	Biogenic Municipal Solid Waste and Landfill Gas
+          NG ->	Natural Gas
+          NUC ->	Nuclear
+          OOG ->	Other Gases
+          ORW ->	Other Renewables 
+          OTH ->	Other (including nonbiogenic MSW)
+          PC ->	Petroleum Coke
+          RFO ->	Residual Petroleum
+          WND ->	Wind
+          WOC ->	Waste Coal
+          WOO ->	Waste Oil
+          WWW ->	Wood and Wood Waste
+
+
+
+      - name: physical_unit_label
+        description: >
+          The type of physical units fuel consumption is reported in. All consumption is reported 
+          in either short tons for solids, thousands of cubic feet for gases, and barrels for liquids:
+          mcf ->	for gases
+          short tons  ->	for solid
+          barrels	-> for liquids
+        tests:
+          - accepted_values:
+              values:
+                - "{{var('physical_unit_label')}}"
+              severity: warn
+
+
+      - name: coal_stock_quantity
+        description: >
+          Total [Month] Ending Stocks of the fuel type in physical units.Numeric.
+
+      - name: oil_stock_quantity
+        description: >
+          Total [Month] Ending Stocks of the fuel type in physical units.Numeric.
+
+      - name: petcoke_stock_quantity
+        description: >
+          Total [Month] Ending Stocks of the fuel type in physical units.Numeric.
+
+      - name: month
+        description: >
+          Calendar Month for Data
+
+      - name: year
+        description: >
+          Calendar Year for Data
