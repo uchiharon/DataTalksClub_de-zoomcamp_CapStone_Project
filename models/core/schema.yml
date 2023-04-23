@@ -210,7 +210,7 @@ models:
 
 
 
-      - name: quantity_of_fuel_consumed
+      - name: quantity_of_boiler_fuel
         description: >
           Consumption of the fuel type specified in Column N, in physical units.Numeric.  Note: this 
           is the total quantity consumed for both electricity and, in the case of combined heat and 

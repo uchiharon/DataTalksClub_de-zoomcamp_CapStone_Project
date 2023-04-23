@@ -88,6 +88,7 @@ IFNULL(petcoke_stock_quantity,0) as petcoke_stock_quantity,
 year,	
 month
 
+FROM stock
 
 {% if var('is_test_run', default=true) %}
 

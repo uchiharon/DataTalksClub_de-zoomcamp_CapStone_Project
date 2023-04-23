@@ -38,9 +38,9 @@ models:
 
 vars:
   sector_number: [1,2,3,4,5,6,7]
-  census_region:  ['NEW','MAT','SAT','ESC','WSC','ENC','WNC','MTN','ACC','PACN']
-  nerc_region:  ['NPCC','MRO', 'SERC','RFC','SPP', 'TRE', 'FRCC', 'WECC']
-  month:  ['january','february','march','april','may','june','july','august','september','october','november','december']
-  physical_unit_label:  ['mcf','short tons','barrels']
-  purchase_type:  ['C','NC','S']
-  regulated:  ['REG','UNR']
+  census_region:  ["NEW","MAT","SAT","ESC","WSC","ENC","WNC","MTN","ACC","PACN"]
+  nerc_region:  ["NPCC","MRO", "SERC","RFC","SPP", "TRE", "FRCC", "WECC"]
+  month:  ["january","february","march","april","may","june","july","august","september","october","november","december"]
+  physical_unit_label:  ["mcf","short tons","barrels"]
+  purchase_type:  ["C","NC","S"]
+  regulated:  ["REG","UNR"]
