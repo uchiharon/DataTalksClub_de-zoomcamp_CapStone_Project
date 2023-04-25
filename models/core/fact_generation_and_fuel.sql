@@ -1,4 +1,4 @@
-{{config(materialized='table')}}
+{{ config(materialized="incremental") }}
 
 
 
@@ -24,6 +24,12 @@ year,
 month
 
 FROM {{ref("stg_generation_and_fuel")}}
+
+{% if is_incremental() %}
+
+where year > (SELECT max(year) FROM {{ this }})
+
+{% endif %}
 
 {% if var('is_test_run', default=true) %}
 

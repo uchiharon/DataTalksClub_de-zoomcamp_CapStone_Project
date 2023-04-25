@@ -36,7 +36,7 @@ models:
           - accepted_values:
               values: "{{ var('sector_number') }}"
               severity: warn
-              quote: false
+            
 
       - name: naics_code
         description: >

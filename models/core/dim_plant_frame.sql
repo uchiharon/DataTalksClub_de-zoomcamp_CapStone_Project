@@ -17,6 +17,7 @@ group by
     plant_name,
     combined_heat_and_power_status
 
+
 {% if var('is_test_run', default=true) %}
 
 limit 20
