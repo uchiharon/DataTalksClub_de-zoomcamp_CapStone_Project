@@ -99,8 +99,7 @@ NULLIF(coal,'.') AS coal_stocks,
 NULLIF(oil,'.') AS oil_stocks,
 NULLIF(petcoke,'.') AS petcoke,
 NULLIF(month,'.') AS month,
---NULLIF( year, '.') AS year
-2014 AS year
+NULLIF( year, '.') AS year
 
 FROM semi_transformed_data
 

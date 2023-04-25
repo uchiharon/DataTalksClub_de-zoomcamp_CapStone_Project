@@ -1,4 +1,4 @@
-{{ config(materialized="table") }}
+{{ config(materialized="incremental") }}
 
 
 SELECT
@@ -20,6 +20,12 @@ month,
 year
 
 FROM {{ref("stg_energy_storage")}}
+
+{% if is_incremental() %}
+
+where year > (SELECT max(year) FROM {{ this }})
+
+{% endif %}
 
 
 {% if var('is_test_run', default=true) %}

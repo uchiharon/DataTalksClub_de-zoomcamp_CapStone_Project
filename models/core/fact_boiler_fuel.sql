@@ -1,4 +1,4 @@
-{{ config(materialized="table") }}
+{{ config(materialized="incremental") }}
 
 
 SELECT
@@ -13,7 +13,7 @@ boiler_id,
 reported_prime_mover,			
 reported_fuel_type_code,			
 physical_unit_label,	
-quantity_of_fuel_consumed,			
+quantity_of_boiler_fuel,			
 heat_content_per_unit,			
 sulfur_content,			
 ash_content,			
@@ -21,6 +21,14 @@ year,
 month
 
 FROM {{ref("stg_boiler_fuel")}}
+
+
+{% if is_incremental() %}
+
+where year > (SELECT max(year) FROM {{ this }})
+
+{% endif %}
+
 
 
 

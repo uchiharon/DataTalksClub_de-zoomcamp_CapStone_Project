@@ -1,4 +1,4 @@
-{{config(materialized='table')}}
+{{ config(materialized="incremental") }}
 
 
 WITH stock as (SELECT 
@@ -88,6 +88,13 @@ IFNULL(petcoke_stock_quantity,0) as petcoke_stock_quantity,
 year,	
 month
 
+FROM stock
+
+{% if is_incremental() %}
+
+where year > (SELECT max(year) FROM {{ this }})
+
+{% endif %}
 
 {% if var('is_test_run', default=true) %}
 

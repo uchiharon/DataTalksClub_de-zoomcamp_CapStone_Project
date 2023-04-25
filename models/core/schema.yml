@@ -36,7 +36,7 @@ models:
           - accepted_values:
               values: "{{ var('sector_number') }}"
               severity: warn
-              quote: false
+            
 
       - name: naics_code
         description: >
@@ -97,8 +97,7 @@ models:
         
         tests:
           - accepted_values:
-              values:
-                - "{{ var('census_region')}}"
+              values: "{{ var('census_region')}}"
               severity: warn
 
 
@@ -116,8 +115,7 @@ models:
           WECC	= Western Electricity Coordinating Council
         tests:
           - accepted_values:
-              values:
-                - "{{var('nerc_region')}}"
+              values: "{{var('nerc_region')}}"
 
       - name: boiler_id
         description: >
@@ -204,13 +202,12 @@ models:
           barrels	-> for liquids
         tests:
           - accepted_values:
-              values:
-                - "{{var('physical_unit_label')}}"
+              values: "{{var('physical_unit_label')}}"
               severity: warn
 
 
 
-      - name: quantity_of_fuel_consumed
+      - name: quantity_of_boiler_fuel
         description: >
           Consumption of the fuel type specified in Column N, in physical units.Numeric.  Note: this 
           is the total quantity consumed for both electricity and, in the case of combined heat and 
@@ -400,8 +397,7 @@ models:
           barrels	-> for liquids
         tests:
           - accepted_values:
-              values:
-                - "{{var('physical_unit_label')}}"
+              values: "{{var('physical_unit_label')}}"
               severity: warn
 
 
@@ -453,8 +449,7 @@ models:
           S ->	Spot Purchase
         tests:
           - accepted_values:
-              values:
-                - "{{var('purchase_type')}}"
+              values: "{{var('purchase_type')}}"
               severity: warn
 
 
@@ -559,8 +554,7 @@ models:
           UNR ->	Non-Regulated Independent Power Plant or Nonutility Plant.
         tests:
           - accepted_values:
-              values:
-                - "{{var('regulated')}}"
+              values: "{{var('regulated')}}"
               severity: warn
 
       - name: operator_name
@@ -791,8 +785,7 @@ models:
           barrels	-> for liquids
         tests:
           - accepted_values:
-              values:
-                - "{{var('physical_unit_label')}}"
+              values: "{{var('physical_unit_label')}}"
               severity: warn
 
 
@@ -1100,8 +1093,7 @@ models:
           barrels	-> for liquids
         tests:
           - accepted_values:
-              values:
-                - "{{var('physical_unit_label')}}"
+              values: "{{var('physical_unit_label')}}"
               severity: warn
 
 

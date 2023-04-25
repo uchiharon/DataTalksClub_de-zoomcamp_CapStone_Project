@@ -1,4 +1,4 @@
-{{config(materialized='table')}}
+{{ config(materialized="incremental") }}
 
 
 SELECT 
@@ -34,6 +34,12 @@ year,
 month
 
 FROM {{ref("stg_fuel_recipts_and_cost")}}
+
+{% if is_incremental() %}
+
+where year > (SELECT max(year) FROM {{ this }})
+
+{% endif %}
 
 
 {% if var('is_test_run', default=true) %}
