@@ -11,7 +11,7 @@ with stock_data as (
 coal_data as (SELECT row_number,
 NULLIF(census_division_and_state, '.') AS census_division_and_state,
 coal,
---year,
+year,
 {{extract_month('months')}} as month
 
 FROM stock_data
@@ -37,7 +37,7 @@ coal_december
 oil_data as (SELECT row_number,
 NULLIF(census_division_and_state, '.') AS census_division_and_state,
 oil,
---year,
+year,
 {{extract_month('months')}} as month
 
 FROM stock_data
@@ -65,7 +65,7 @@ oil_december
 petcoke_data as (SELECT row_number,
 NULLIF(census_division_and_state, '.') AS census_division_and_state,
 petcoke,
---year,
+year,
 {{extract_month('months')}} as month
 
 FROM stock_data
