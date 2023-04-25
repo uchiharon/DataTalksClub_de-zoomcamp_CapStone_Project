@@ -95,9 +95,9 @@ ON cd.row_number = pd.row_number and cd.census_division_and_state = pd.census_di
 
 SELECT 
 NULLIF(census_division_and_state,'.') AS census_division_and_state,
-CAST(NULLIF(coal,'.') AS FLOAT64) AS coal_stocks,
-CAST(NULLIF(oil,'.') AS FLOAT64) AS oil_stocks,
-CAST(NULLIF(petcoke,'.') AS FLOAT64) AS petcoke,
+CAST(NULLIF(NULLIF(coal,'.'), 'W') AS FLOAT64) AS coal_stocks,
+CAST(NULLIF(NULLIF(oil,'.'), 'W') AS FLOAT64) AS oil_stocks,
+CAST(NULLIF(NULLIF(petcoke,'.'), 'W') AS FLOAT64) AS petcoke,
 NULLIF(month,'.') AS month,
 NULLIF( year, '.') AS year
 
