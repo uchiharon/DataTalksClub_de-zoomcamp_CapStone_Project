@@ -2,19 +2,10 @@
 ---
 # OUTLINE
 I. Introduction \
-II. Data Extraction \
+II. Data Pipeline \
 III. Exploratory Data Analysis \
-VI. Results and Discussion \
-A. Key Findings and Insights from the Analysis \
-B. Interpretation of the Predictive and Optimization Model Results \
-C. Comparison of Results with Industry Trends and Benchmarks
-
-VII. Conclusion and Future Work \
-A. Summary of the Capstone Project and its Objectives \
-B. Contributions and Implications of the Capstone Project \
-C. Future Directions and Potential Extensions
-
-VIII. References and Acknowledgments
+VI. Pipeline automation
+VIII. Acknowledgments
 
 ---
 # INTRODUCTION
@@ -102,3 +93,46 @@ Specifically, the project aims to address the following key objectives:
 ## Analytics Dashboard
 To get an insight of the electrics consumption and production in the united states.
 > ![png2](https://github.com/uchiharon/DataTalksClub_de-zoomcamp_CapStone_Project/blob/main/Pictures/looker.png)
+---
+# PIPELINE AUTOMATION
+---
+This starts with the VM automation
+> ![png3](https://github.com/uchiharon/DataTalksClub_de-zoomcamp_CapStone_Project/blob/main/Pictures/VM%20schedule.png)
+
+And using a start up script to run prefect agent 
+```
+        #!/bin/bash
+        pip --version
+        python3 --version
+        export PATH=/home/ubuntu/anaconda3/bin:$PATH
+        pip --version
+        python3 --version
+
+        echo $USER
+
+
+
+        # login
+        prefect cloud login --key key --workspace workspacename
+
+        # Start Prefect agent
+        prefect agent start --work-queue "default"
+```
+
+Next is to schedule prefect to run 5 mins after the VM starts
+> ![png4](https://github.com/uchiharon/DataTalksClub_de-zoomcamp_CapStone_Project/blob/main/Pictures/Prefect%20Scheduling.png)
+
+There after BiqQuery is set to refresh the external tables
+> ![png5](https://github.com/uchiharon/DataTalksClub_de-zoomcamp_CapStone_Project/blob/main/Pictures/External%20table%20refresh.png)
+
+DBT is expected to run just after the external tables are run.
+> ![png6](https://github.com/uchiharon/DataTalksClub_de-zoomcamp_CapStone_Project/blob/main/Pictures/DBT%20Schedule.png)
+
+
+*The VM is expected to shutdown 30mins after running*
+
+---
+# Acknowledgments
+---
+All big thanks to the DataTalksClub Team.
+https://github.com/DataTalksClub/data-engineering-zoomcamp
