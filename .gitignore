@@ -1,2 +1,5 @@
 1_etl_to_gcs/f923_2022
 1_etl_to_gcs/data
+1_etl_to_gcs/downloaded_data
+2_terraform_gcp/kubectl.exe
+2_terraform_gcp/.terraform

@@ -22,3 +22,6 @@ variable "BQ_DATASET" {
   type = string
   default = "eia_electric_data"
 }
+
+
+

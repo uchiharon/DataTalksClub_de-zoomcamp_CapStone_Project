@@ -1,0 +1,35 @@
+{{config(materialized='view')}}
+
+
+SELECT NULLIF(year, '.') AS year,			
+NULLIF(month, '.') AS month,			
+NULLIF(plant_id, '.') AS plant_id,			
+NULLIF(plant_name, '.') AS plant_name,			
+NULLIF(plant_state, '.') AS plant_state,			
+NULLIF(purchase_type, '.') AS purchase_type,			
+NULLIF(contract_expiration_date, '.') AS contract_expiration_date,			
+NULLIF(energy_source, '.') AS energy_source,			
+NULLIF(fuel_group, '.') AS fuel_group,			
+NULLIF(coalmine_type, '.') AS coalmine_type,			
+NULLIF(coalmine_state, '.') AS coalmine_state,			
+NULLIF(coalmine_county, '.') AS coalmine_county,			
+NULLIF(coalmine_msha_id, '.') AS coalmine_msha_id,			
+NULLIF(coalmine_name, '.') AS coalmine_name,			
+NULLIF(supplier, '.') AS supplier,		
+CAST(NULLIF(quantity, '.') AS INT) AS quantity,			
+CAST(NULLIF(average_heat_content, '.') AS FLOAT64) AS average_heat_content,			
+CAST(NULLIF(average_sulfur_content, '.') AS FLOAT64) AS average_sulfur_content,			
+CAST(NULLIF(average_ash_content, '.') AS FLOAT64) AS average_ash_content,			
+CAST(NULLIF(average_mercury_content, '.') AS FLOAT64) AS average_mercury_content,			
+CAST(NULLIF(fuel_cost, '.') AS FLOAT64) AS fuel_cost,			
+NULLIF(regulated, '.') AS regulated,			
+NULLIF(operator_name, '.') AS operator_name,			
+NULLIF(operator_id, '.') AS operator_id,			
+NULLIF(primary_transportation_mode, '.') AS primary_transportation_mode,			
+NULLIF(secondary_transportation_mode, '.') AS secondary_transportation_mode,			
+NULLIF(natural_gas_supply_contract_type, '.') AS natural_gas_supply_contract_type,			
+NULLIF(natural_gas_delivery_contract_type, '.') AS natural_gas_delivery_contract_type,			
+CAST(NULLIF(moisture_content, '.') AS FLOAT64) AS moisture_content,			
+CAST(NULLIF(chlorine_content, '.') AS FLOAT64) AS chlorine_content
+
+from {{source('staging','fuel_recipts_and_cost')}}

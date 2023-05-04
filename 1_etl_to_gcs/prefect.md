@@ -1,0 +1,1 @@
+prefect deployment build ./etl_web_to_gcs.py:main -n "EIA_ELT" -a

@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: staging
+    database: climate-team-1
+    schema: eia_electric_data
+
+    
+    tables:
+      - name: boiler_fuel
+      - name: coal_stocks
+      - name: energy_storage
+      - name: fuel_recipts_and_cost
+      - name: generation_and_fuel
+      - name: generator
+      - name: oil_stocks
+      - name: petcoke_stocks
+      - name: plant_frame
+      - name: stocks
+
+models:
+    - name: stg_boiler_fuel
+      description: >
+        The term "boiler_fuel" in EIA (U.S. Energy Information Administration) electric data refers to the type of fuel used to generate steam or hot water in boilers that are used to produce electricity. 
+        The boiler fuel is the primary fuel source used to heat water, which creates steam to power a turbine and generate electricity.
+
+        Boiler fuel types can include natural gas, coal, oil, biomass, and other fuels. The EIA collects data on the amount of each type of fuel used to generate electricity in the United States, and this data is used to track trends in energy consumption, production, and prices, among other things.
+
+
