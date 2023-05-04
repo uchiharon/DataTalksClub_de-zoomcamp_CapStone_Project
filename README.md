@@ -92,4 +92,13 @@ Specifically, the project aims to address the following key objectives:
 
 ---
 # DATA PIPELINE
+---
+## Architecture
+> ![png1](https://github.com/uchiharon/DataTalksClub_de-zoomcamp_CapStone_Project/blob/main/Pictures/Project%20workflow.png)
 
+---
+# DATA EXPLORATION
+---
+## Analytics Dashboard
+To get an insight of the electrics consumption and production in the united states.
+> ![png2](https://github.com/uchiharon/DataTalksClub_de-zoomcamp_CapStone_Project/blob/main/Pictures/looker.png)
