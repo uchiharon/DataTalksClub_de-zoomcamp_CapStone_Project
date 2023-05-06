@@ -12,7 +12,7 @@ VIII. Acknowledgments
 
 ---
 ## Background and Motivation
-The US electric power industry is undergoing a significant transformation as it strives to meet the increasing demand for electricity while simultaneously reducing greenhouse gas emissions. The US Energy Information Administration (EIA) collects and publishes data on energy production, consumption, and distribution in the United States. The EIA-923 report is a critical source of data for the electric power industry, providing detailed information on electricity generation, fuel consumption, and other key metrics. However, the data contained in the report is complex and challenging to work with, making it difficult to extract insights and useful information.
+The US electric power industry is undergoing a significant transformation as it strives to meet the increasing demand for electricity while simultaneously reducing greenhouse gas emissions. The US Energy Information Administration (EIA) collects and publishes data on energy production, consumption, and distribution in the United States. The [EIA-923 report](https://www.eia.gov/electricity/data/eia923/) is a critical source of data for the electric power industry, providing detailed information on electricity generation, fuel consumption, and other key metrics. However, the data contained in the report is complex and challenging to work with, making it difficult to extract insights and useful information.
 > The motivation for this project is to create an ETL pipeline that will enable the efficient processing and analysis of the EIA-923 data. By automating the extraction, transformation, and loading of the data, we can streamline the data processing workflow and make it easier to generate insights and actionable information.
 
 ---
@@ -181,5 +181,11 @@ To run the project, use the following step:\
 ---
 # Acknowledgments
 ---
-All big thanks to the DataTalksClub Team.
-https://github.com/DataTalksClub/data-engineering-zoomcamp
+
+I would like to extend my heartfelt thanks and gratitude to [DataTalksClub](https://github.com/DataTalksClub/data-engineering-zoomcamp) for their exceptional data engineering program. Their comprehensive and hands-on approach to teaching data engineering has been invaluable in helping me acquire the skills and knowledge needed to excel in my career.
+
+The program was well-structured and provided a clear roadmap for learning, starting from the basics and progressing to advanced concepts. The instructors were knowledgeable, experienced, and supportive, and the course materials were well-designed and easy to follow.
+
+I particularly appreciated the opportunity to work on real-world projects and gain practical experience in data engineering. The program has equipped me with the necessary skills to tackle complex data engineering challenges and has prepared me for success in the field.
+
+Once again, I extend my sincere thanks and appreciation to [DataTalksClub](https://github.com/DataTalksClub/data-engineering-zoomcamp) for their outstanding data engineering program.
