@@ -62,11 +62,11 @@ Specifically, the project aims to address the following key objectives:
 
 6. **Deployment**: Use the Docker file to build a Prefect deployment.
 
-7. **External Tables**: Create external tables in BigQuery using the Parquet files.
+7. **Data warehouse**: Create external tables in BigQuery using the Parquet files in cloud storage. No clustering but just partitioning. Partitioning took place after data modeling in DBT.
 
-8. **Data Modeling**: Use DBT to model the tables.
+8. **Data Modeling**: Use DBT to model the tables. The model table where then partition by the years columns since the analysis is expect to be filtered annually.
 
-9. **Data Visualization**: Visualize the modeled data using Looker.
+9. **Data Visualization**: Visualization of the data was done using Looker. You can access it using this [link](https://lookerstudio.google.com/embed/reporting/c01535e2-f95f-4990-80f7-c55dc65f75fc/page/qgR)
 
 10. **Start-up Script**: Create a start-up script for the VM to run the Prefect agent on start-up.
 
@@ -130,6 +130,33 @@ DBT is expected to run just after the external tables are run.
 
 
 *The VM is expected to shutdown 30mins after running*
+
+---
+Reproduce
+---
+Prequist: Ensure you have Google cloud, DBT, Prefect Cloud account
+To run the project, use the following step:\
+- On GCP create a service account with with GCE, GCS and BiqQuery admin previllage
+- Create a VM with machine type `n1-standard-1` in `europe-west1` region
+- Setup the VM [link](https://www.youtube.com/watch?v=ae-CV2KfoN0&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=13&pp=iAQB):
+    - Install Anaconda using the following steps:
+        - Download anaconda using `wget https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Linux-x86_64.sh` or the latest version from this [link](https://www.anaconda.com/download#downloads)
+        - `bash Anaconda3-2023.03-1-Linux-x86_64.sh`
+    - Install Docker and create a user by using the following steps:
+        - `sudo apt-get update`
+        - `sudo apt-get install docker.io`
+        - `sudo groupadd docker`
+        - `sudo gpasswd -a $USER docker` 
+        - `sudo docker service restart`
+- Restart VM       
+- Clone this repo using: `git clone https://github.com/uchiharon/DataTalksClub_de-zoomcamp_CapStone_Project.git`
+- Install terraform following the instruction in this [link](https://phoenixnap.com/kb/how-to-install-terraform)
+- Navigate to the [2_terraform]() folder, then from your CLI run:
+    - `terraform init`
+    - `terraform plan`
+    - `terraform apply`
+
+
 
 ---
 # Acknowledgments
