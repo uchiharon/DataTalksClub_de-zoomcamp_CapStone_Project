@@ -175,6 +175,7 @@ To run the project, use the following step:\
 - Run  `prefect agent start --work-queue "default"` on your VM to execute a prefect agent
 - From prefect cloud, run the workflow
 - To create the external table of the parquet files in Bigquery, copy the sql code the [6_bigquery]() folder, paste it on the console and run.
+- **Finally**: To run the dbt model, copy all files from the [5_dbt]() folder and run the deployment.
 
 
 ---
