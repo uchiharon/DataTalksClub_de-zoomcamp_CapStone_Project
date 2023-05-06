@@ -155,7 +155,26 @@ To run the project, use the following step:\
     - `terraform init`
     - `terraform plan`
     - `terraform apply`
-
+- On your prefect cloud, create the following buckets:
+    - Docker Container
+        - name: `eia-etl-container`
+        - image: `emmanuelikpesu/eia_etl:v01`
+        - imagepullpolicy: `ALWAYS`
+    - GCP Credentials
+        - name: `zoom-gcp-creds`
+        **INPUT GCP Credentials**
+     - GCS Bucket
+        -name: `zoom-gcs`
+    - JSON
+        -name: `excel-sheet-schema`
+        - **NOTE**: Copy the information from the [excel file setting]() into it
+    - String
+        -name: `report-year`
+        -input: 2014 (for start)
+- Navigate to the [4_deployment]() folder, then run `python docker_deployment.py` to deploy the prefect workflow
+- Run  `prefect agent start --work-queue "default"` on your VM to execute a prefect agent
+- From prefect cloud, run the workflow
+- To create the external table of the parquet files in Bigquery, copy the sql code the [6_bigquery]() folder, paste it on the console and run.
 
 
 ---
